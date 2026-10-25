@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FinSim — DRE, Balanço e Capital de Giro</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Onboarding -->
+  <div class="onboarding-overlay" id="onboarding">
+    <div class="onboarding-card">
+      <div class="onboarding-slides" id="onboardingSlides">
+        <div class="onboarding-slide active">
+          <div class="onboarding-icon">📊</div>
+          <h2>Bem-vindo ao FinSim</h2>
+          <p>Este app foi feito para quem está aprendendo finanças. Aqui você vai ver, na prática, como decisões operacionais se transformam em resultados financeiros.</p>
+        </div>
+        <div class="onboarding-slide">
+          <div class="onboarding-icon">🔗</div>
+          <h2>Os 3 módulos estão conectados</h2>
+          <p>Você ajusta <strong>premissas</strong> → o resultado aparece na <strong>DRE</strong> → a DRE alimenta o <strong>Balanço</strong> → e o Balanço explica seu <strong>Capital de Giro</strong>.</p>
+        </div>
+        <div class="onboarding-slide">
+          <div class="onboarding-icon">🎯</div>
+          <h2>Aprenda brincando</h2>
+          <p>Digite os valores nas premissas, observe os gráficos, leia os feedbacks, tente os desafios e consulte o glossário. Quanto mais você mexer, mais clara fica a relação causa-efeito.</p>
+        </div>
+      </div>
+      <div class="onboarding-dots" id="onboardingDots">
+        <span class="dot active"></span><span class="dot"></span><span class="dot"></span>
+      </div>
+      <div class="onboarding-actions">
+        <button id="btnOnboardingPrev" class="btn secondary">Voltar</button>
+        <button id="btnOnboardingNext" class="btn primary">Próximo</button>
+        <button id="btnOnboardingSkip" class="btn secondary">Pular</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="app-header">
+    <div class="brand-row">
+      <div class="brand">
+        <img src="logo-have.png" alt="HAVE" class="logo-img" />
+        <h1>FinSim</h1>
+      </div>
+      <button class="qr-btn" id="qrBtn" title="Compartilhar QR Code">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="3" width="7" height="7" rx="1" />
+          <rect x="14" y="3" width="7" height="7" rx="1" />
+          <rect x="3" y="14" width="7" height="7" rx="1" />
+          <path d="M14 14h7v7h-7z" />
+          <path d="M14 14v7" />
+          <path d="M21 14v7" />
+          <path d="M14 21h7" />
+        </svg>
+        <span>Compartilhar</span>
+      </button>
+    </div>
+    <p class="tagline">DRE Gerencial · Balanço Patrimonial · Capital de Giro</p>
+    <nav class="stepper" id="mainNav" aria-label="Etapas do fluxo financeiro">
+      <button class="nav-btn active" data-tab="premissas">
+        <span class="step-number">1</span>
+        <span class="step-label">Premissas DRE</span>
+      </button>
+      <span class="step-arrow" aria-hidden="true">→</span>
+      <button class="nav-btn" data-tab="premissas-balanco">
+        <span class="step-number">2</span>
+        <span class="step-label">Premissas Balanço</span>
+      </button>
+      <span class="step-arrow" aria-hidden="true">→</span>
+      <button class="nav-btn" data-tab="dre">
+        <span class="step-number">3</span>
+        <span class="step-label">DRE</span>
+      </button>
+      <span class="step-arrow" aria-hidden="true">→</span>
+      <button class="nav-btn" data-tab="balanco">
+        <span class="step-number">4</span>
+        <span class="step-label">Balanço</span>
+      </button>
+      <span class="step-arrow" aria-hidden="true">→</span>
+      <button class="nav-btn" data-tab="fluxo-caixa">
+        <span class="step-number">5</span>
+        <span class="step-label">Fluxo de Caixa</span>
+      </button>
+      <span class="step-arrow" aria-hidden="true">→</span>
+      <button class="nav-btn" data-tab="giro">
+        <span class="step-number">6</span>
+        <span class="step-label">Capital de Giro</span>
+      </button>
+      <span class="step-arrow" aria-hidden="true">→</span>
+      <button class="nav-btn" data-tab="kpis">
+        <span class="step-number">7</span>
+        <span class="step-label">KPIs</span>
+      </button>
+      <span class="step-arrow learn" aria-hidden="true">→</span>
+      <button class="nav-btn learn" data-tab="aprender">
+        <span class="step-number">★</span>
+        <span class="step-label">Aprender</span>
+      </button>
+    </nav>
+  </header>
+
+  <div class="stepper-hint">
+    <p>Fluxo: <strong>Premissas DRE</strong> alimentam a <strong>DRE</strong> → <strong>Premissas Balanço</strong> + DRE geram o <strong>Balanço</strong> → a DRE e o Balanço geram o <strong>Fluxo de Caixa</strong> → o Balanço e os prazos geram o <strong>Capital de Giro</strong>.</p>
+  </div>
+
+  <main class="container">
+    <!-- Painel de Premissas -->
+    <section id="tab-premissas" class="tab-panel active">
+      <div class="panel-header">
+        <h2>Premissas DRE</h2>
+        <p class="hint">Ajuste as premissas que alimentam a DRE.</p>
+      </div>
+      <div class="view-toggle">
+        <span class="toggle-label">Visualizar valores:</span>
+        <button class="toggle-btn active" id="btnViewAnnual" data-view="annual">Anual</button>
+        <button class="toggle-btn" id="btnViewMonthly" data-view="monthly">Mensal</button>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Receita e Custos</h3>
+          <div class="input-group">
+            <label for="receitaBruta">Receita bruta anual (R$)</label>
+            <input type="text" id="receitaBruta" class="input-currency" inputmode="decimal" data-min="0" data-max="20000000" />
+          </div>
+          <div class="input-group">
+            <label for="deducoes">Deduções/impostos sobre vendas (%)</label>
+            <input type="text" id="deducoes" class="input-percent" inputmode="decimal" data-min="0" data-max="35" data-step="0.5" />
+          </div>
+          <div class="input-group">
+            <label for="cmvPercent">CMV / custo dos serviços (%)</label>
+            <input type="text" id="cmvPercent" class="input-percent" inputmode="decimal" data-min="0" data-max="90" />
+          </div>
+          <div class="input-group">
+            <label for="despesasFixas">Despesas operacionais fixas anuais (R$)</label>
+            <input type="text" id="despesasFixas" class="input-currency" inputmode="decimal" data-min="0" data-max="8000000" />
+          </div>
+          <div class="input-group">
+            <label for="despesasVariaveis">Despesas variáveis (% da receita líquida)</label>
+            <input type="text" id="despesasVariaveis" class="input-percent" inputmode="decimal" data-min="0" data-max="40" data-step="0.5" />
+          </div>
+          <div class="input-group">
+            <label for="despesasEmprestimos">Despesas com juros (R$)</label>
+            <input type="text" id="despesasEmprestimos" class="input-currency" inputmode="decimal" data-min="0" data-max="2000000" />
+          </div>
+        </div>
+        <div class="card">
+          <h3>Prazos e Sazonalidade</h3>
+          <div class="input-group">
+            <label for="pmr"><span class="term" data-term="PMR">Prazo Médio de Recebimento</span> (PMR, dias)</label>
+            <input type="text" id="pmr" class="input-days" inputmode="numeric" data-min="0" data-max="180" />
+          </div>
+          <div class="input-group">
+            <label for="pme"><span class="term" data-term="PME">Prazo Médio de Estoque</span> (PME, dias)</label>
+            <input type="text" id="pme" class="input-days" inputmode="numeric" data-min="0" data-max="180" />
+          </div>
+          <div class="input-group">
+            <label for="pmp"><span class="term" data-term="PMP">Prazo Médio de Pagamento</span> (PMP, dias)</label>
+            <input type="text" id="pmp" class="input-days" inputmode="numeric" data-min="0" data-max="180" />
+          </div>
+          <div class="input-group">
+            <label for="depreciacao">Depreciação anual (R$)</label>
+            <input type="text" id="depreciacao" class="input-currency" inputmode="decimal" data-min="0" data-max="2000000" />
+          </div>
+          <div class="input-group">
+            <label for="sazonalidade">Crescimento mensal (%)</label>
+            <input type="text" id="sazonalidade" class="input-percent-signed" inputmode="decimal" data-min="-5" data-max="10" data-step="0.5" />
+          </div>
+        </div>
+      </div>
+      <div class="card feedback" id="feedbackPremissas">
+        <strong>Feedback:</strong> <span></span>
+      </div>
+      <div class="module-nav">
+        <span></span>
+        <button class="btn primary next-btn" data-next="premissas-balanco">Próximo <span>→</span></button>
+      </div>
+    </section>
+
+    <!-- Premissas do Balanço -->
+    <section id="tab-premissas-balanco" class="tab-panel">
+      <div class="panel-header">
+        <h2>Premissas do Balanço</h2>
+        <p class="hint">Monte o balanço patrimonial passo a passo.</p>
+      </div>
+
+      <div class="balance-wizard" id="balanceWizard">
+        <div class="wizard-scoreboard">
+          <div class="score-pill">
+            <span class="score-icon">🏆</span>
+            <span class="score-label">Progresso</span>
+            <span class="score-value" id="wizardProgressText">Fase 1 de 5</span>
+          </div>
+          <div class="score-pill">
+            <span class="score-icon">⭐</span>
+            <span class="score-label">XP</span>
+            <span class="score-value" id="wizardXpText">0</span>
+          </div>
+          <div class="score-pill">
+            <span class="score-icon">📝</span>
+            <span class="score-label">Contas</span>
+            <span class="score-value" id="wizardAccountsText">0</span>
+          </div>
+        </div>
+        <div class="wizard-progress-wrapper">
+          <div class="wizard-progress-bar">
+            <div class="wizard-progress-fill" id="wizardProgressFill"></div>
+          </div>
+          <div class="wizard-progress-steps" id="wizardProgressSteps">
+            <!-- Renderizado via JS -->
+          </div>
+        </div>
+
+        <div class="wizard-body">
+          <div class="wizard-content" id="wizardContent">
+            <!-- Renderizado via JS -->
+          </div>
+
+          <div class="wizard-actions">
+            <button class="btn wizard-btn secondary" id="wizardPrev">
+              <span class="btn-icon">←</span> Voltar
+            </button>
+            <button class="btn wizard-btn primary" id="wizardNext">
+              Próximo <span class="btn-icon">→</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="module-nav">
+        <button class="btn secondary prev-btn" data-prev="premissas"><span>←</span> Voltar</button>
+        <button class="btn primary next-btn" data-next="dre">Próximo <span>→</span></button>
+      </div>
+    </section>
+
+    <section id="tab-dre" class="tab-panel">
+      <div class="panel-header">
+        <h2>DRE Gerencial</h2>
+        <p class="hint">A Demonstração do Resultado do Exercício em cascata.</p>
+      </div>
+      <div class="card flow-diagram">
+        <div class="flow-step">Receita</div><span class="flow-arrow">→</span>
+        <div class="flow-step">Deduções</div><span class="flow-arrow">→</span>
+        <div class="flow-step">Rec. Líquida</div><span class="flow-arrow">→</span>
+        <div class="flow-step">CMV</div><span class="flow-arrow">→</span>
+        <div class="flow-step">Lucro Bruto</div><span class="flow-arrow">→</span>
+        <div class="flow-step">Despesas</div><span class="flow-arrow">→</span>
+        <div class="flow-step">EBITDA</div><span class="flow-arrow">→</span>
+        <div class="flow-step">Deprec.</div><span class="flow-arrow">→</span>
+        <div class="flow-step">EBIT</div><span class="flow-arrow">→</span>
+        <div class="flow-step">IR/CSLL</div><span class="flow-arrow">→</span>
+        <div class="flow-step">Lucro Líquido</div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>DRE (valores anuais)</h3>
+          <table class="dre-table" id="dreTable">
+            <tbody></tbody>
+          </table>
+          <div class="indicators" id="dreIndicators"></div>
+        </div>
+        <div class="card">
+          <h3>Waterfall DRE</h3>
+          <div class="waterfall" id="dreWaterfall"></div>
+        </div>
+      </div>
+      <div class="card monthly-table-card">
+        <h3>DRE (valores mensais)</h3>
+        <p class="hint">Valores projetados mês a mês com a sazonalidade configurada.</p>
+        <div class="monthly-table-wrap">
+          <table class="monthly-dre-table" id="monthlyDreTable">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card compare-card">
+        <h3>Comparativo antes × depois</h3>
+        <div class="compare-grid" id="compareDre"></div>
+      </div>
+      <div class="card feedback" id="feedbackDre">
+        <strong>Feedback DRE:</strong> <span></span>
+      </div>
+      <div class="module-nav">
+        <button class="btn secondary prev-btn" data-prev="premissas-balanco"><span>←</span> Voltar</button>
+        <button class="btn primary next-btn" data-next="balanco">Próximo <span>→</span></button>
+      </div>
+    </section>
+    <!-- Balanço -->
+    <section id="tab-balanco" class="tab-panel">
+      <div class="panel-header">
+        <h2>Balanço Patrimonial</h2>
+        <p class="hint">Ativo = Passivo + Patrimônio Líquido. O caixa é a conta de fechamento.</p>
+      </div>
+      <div class="card flow-diagram center">
+        <div class="flow-step">DRE</div><span class="flow-arrow">→</span>
+        <div class="flow-step">Lucro Líquido</div><span class="flow-arrow">→</span>
+        <div class="flow-step">Lucros Acumulados</div><span class="flow-arrow">→</span>
+        <div class="flow-step">Patrimônio Líquido</div><span class="flow-arrow">→</span>
+        <div class="flow-step">Balanço</div>
+      </div>
+      <div class="balance-sheet">
+        <div class="card balanco-col">
+          <h3>Ativo</h3>
+          <div class="balance-block" id="ativoCirculante">
+            <h4><span class="term" data-term="Ativo Circulante">Ativo Circulante</span></h4>
+            <div class="block-items"></div>
+          </div>
+          <div class="balance-block" id="ativoNaoCirculante">
+            <h4><span class="term" data-term="Ativo Não Circulante">Ativo Não Circulante</span></h4>
+            <div class="block-items"></div>
+          </div>
+          <div class="balance-total" id="totalAtivo"></div>
+        </div>
+        <div class="card balanco-col">
+          <h3>Passivo + PL</h3>
+          <div class="balance-block" id="passivoCirculante">
+            <h4><span class="term" data-term="Passivo Circulante">Passivo Circulante</span></h4>
+            <div class="block-items"></div>
+          </div>
+          <div class="balance-block" id="passivoNaoCirculante">
+            <h4><span class="term" data-term="Passivo Não Circulante">Passivo Não Circulante</span></h4>
+            <div class="block-items"></div>
+          </div>
+          <div class="balance-block" id="patrimonioLiquido">
+            <h4><span class="term" data-term="Patrimônio Líquido">Patrimônio Líquido</span></h4>
+            <div class="block-items"></div>
+          </div>
+          <div class="balance-total" id="totalPassivoPL"></div>
+        </div>
+      </div>
+      <div class="card trace-card">
+        <h3>Rastreabilidade</h3>
+        <p>Clique em uma conta do balanço para ver qual premissa a gera.</p>
+        <div id="traceInfo" class="trace-info">Selecione uma conta à esquerda ou à direita.</div>
+      </div>
+      <div class="card monthly-table-card">
+        <h3>Balanço Patrimonial (valores mensais)</h3>
+        <p class="hint">Evolução das contas mês a mês com base na DRE mensal e nos prazos.</p>
+        <div class="monthly-table-wrap">
+          <table class="monthly-dre-table" id="monthlyBalancoTable">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card feedback" id="feedbackBalanco">
+        <strong>Feedback Balanço:</strong> <span></span>
+      </div>
+      <div class="module-nav">
+        <button class="btn secondary prev-btn" data-prev="dre"><span>←</span> Voltar</button>
+        <button class="btn primary next-btn" data-next="fluxo-caixa">Próximo <span>→</span></button>
+      </div>
+    </section>
+
+    <!-- Fluxo de Caixa (DFC - Método Indireto) -->
+    <section id="tab-fluxo-caixa" class="tab-panel">
+      <div class="panel-header">
+        <h2>Fluxo de Caixa — Método Indireto</h2>
+        <p class="hint">Parte do Lucro Líquido, readiciona a depreciação (despesa não-caixa) e ajusta as variações das contas do balanço até chegar à variação do caixa.</p>
+      </div>
+      <div class="card flow-diagram center">
+        <div class="flow-step">Lucro Líquido</div><span class="flow-arrow">→</span>
+        <div class="flow-step">(+) Depreciação</div><span class="flow-arrow">→</span>
+        <div class="flow-step">(±) Capital de Giro</div><span class="flow-arrow">→</span>
+        <div class="flow-step">Caixa Operacional</div><span class="flow-arrow">→</span>
+        <div class="flow-step">Variação do Caixa</div>
+      </div>
+      <div class="card monthly-table-card">
+        <h3>Demonstração dos Fluxos de Caixa (valores mensais)</h3>
+        <p class="hint">Sinais: aumento de ativo operacional consome caixa (−); aumento de passivo operacional gera caixa (+).</p>
+        <div class="monthly-table-wrap">
+          <table class="monthly-dre-table" id="monthlyDfcTable">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card feedback" id="feedbackDfc">
+        <strong>Conciliação:</strong> <span></span>
+      </div>
+      <div class="module-nav">
+        <button class="btn secondary prev-btn" data-prev="balanco"><span>←</span> Voltar</button>
+        <button class="btn primary next-btn" data-next="giro">Próximo <span>→</span></button>
+      </div>
+    </section>
+
+    <!-- Capital de Giro -->
+    <section id="tab-giro" class="tab-panel">
+      <div class="panel-header">
+        <h2>Capital de Giro</h2>
+        <p class="hint">Ciclo de Conversão de Caixa, NCG, CDG e Saldo de Tesouraria.</p>
+      </div>
+      <div class="card flow-diagram center">
+        <div class="flow-step">Balanço</div><span class="flow-arrow">→</span>
+        <div class="flow-step">PME + PMR − PMP</div><span class="flow-arrow">→</span>
+        <div class="flow-step">CCC</div><span class="flow-arrow">→</span>
+        <div class="flow-step">NCG</div><span class="flow-arrow">→</span>
+        <div class="flow-step">CDG</div><span class="flow-arrow">→</span>
+        <div class="flow-step">Tesouraria</div>
+      </div>
+      <div class="grid-4" id="giroCards">
+        <div class="card metric-card">
+          <div class="metric-label"><span class="term" data-term="CCC">Ciclo de Conversão de Caixa</span></div>
+          <div class="metric-value" id="metricCCC"></div>
+          <div class="metric-desc">PME + PMR − PMP</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-label"><span class="term" data-term="NCG">Necessidade de Capital de Giro</span></div>
+          <div class="metric-value" id="metricNCG"></div>
+          <div class="metric-desc">ACO − PCO</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-label"><span class="term" data-term="CDG">Capital de Giro Líquido</span></div>
+          <div class="metric-value" id="metricCDG"></div>
+          <div class="metric-desc">Financiamento disponível</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-label"><span class="term" data-term="Tesouraria">Saldo de Tesouraria</span></div>
+          <div class="metric-value" id="metricTesouraria"></div>
+          <div class="metric-health" id="metricHealth"></div>
+          <div class="metric-desc">CDG − NCG</div>
+        </div>
+      </div>
+      <div class="card memo-card">
+        <h3>Memória de Cálculo</h3>
+        <p class="hint">Entenda o que cada indicador significa e como ele é calculado a partir das premissas.</p>
+        <div class="memo-list" id="memoCalculo">
+          <div class="memo-item">
+            <div class="memo-title">
+              <span class="memo-sigla">CCC</span>
+              <span class="memo-name">Ciclo de Conversão de Caixa</span>
+            </div>
+            <div class="memo-formula">PME + PMR − PMP</div>
+            <div class="memo-calc" id="memoCCC"></div>
+            <div class="memo-desc">Mede, em dias, quanto tempo o dinheiro fica preso no ciclo operacional. Inclui o estoque, as vendas a prazo e o prazo de pagamento a fornecedores. <strong>Quanto menor, melhor.</strong></div>
+          </div>
+          <div class="memo-item">
+            <div class="memo-title">
+              <span class="memo-sigla">NCG</span>
+              <span class="memo-name">Necessidade de Capital de Giro</span>
+            </div>
+            <div class="memo-formula">ACO − PCO</div>
+            <div class="memo-calc" id="memoNCG"></div>
+            <div class="memo-desc">É o valor que a empresa precisa de recursos para manter a operação girando. ACO = Ativo Circulante Operacional (contas a receber + estoque). PCO = Passivo Circulante Operacional (contas a pagar). <strong>NCG positiva significa que a operação consome caixa.</strong></div>
+          </div>
+          <div class="memo-item">
+            <div class="memo-title">
+              <span class="memo-sigla">CDG</span>
+              <span class="memo-name">Capital de Giro Líquido</span>
+            </div>
+            <div class="memo-formula">Caixa + Outras Obrigações (curto prazo)</div>
+            <div class="memo-calc" id="memoCDG"></div>
+            <div class="memo-desc">Representa os recursos disponíveis de curto prazo para financiar o giro. No nosso modelo, usamos caixa + outras obrigações como proxy do financiamento disponível.</div>
+          </div>
+          <div class="memo-item">
+            <div class="memo-title">
+              <span class="memo-sigla">Tesouraria</span>
+              <span class="memo-name">Saldo de Tesouraria</span>
+            </div>
+            <div class="memo-formula">CDG − NCG</div>
+            <div class="memo-calc" id="memoTesouraria"></div>
+            <div class="memo-desc">Mostra se o capital disponível (CDG) cobre a necessidade operacional (NCG). <strong>Positivo = folga financeira.</strong> <strong>Negativo = déficit que precisa ser financiado.</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card ccc-ruler-card">
+        <h3>Régua Visual do Ciclo de Caixa</h3>
+        <p class="hint">Veja por que <span class="term" data-term="CCC">CCC</span> = PME + PMR − PMP.</p>
+        <div class="ccc-ruler" id="cccRuler">
+          <div class="ruler-track"></div>
+          <div class="ruler-mark pme" id="rulerPme"></div>
+          <div class="ruler-mark pmr" id="rulerPmr"></div>
+          <div class="ruler-mark pmp" id="rulerPmp"></div>
+          <div class="ruler-labels">
+            <span class="ruler-label pme">PME</span>
+            <span class="ruler-label pmr">PMR</span>
+            <span class="ruler-label pmp">PMP</span>
+          </div>
+        </div>
+        <div class="ruler-legend">
+          <span><span class="dot-color pme"></span> PME: estoque</span>
+          <span><span class="dot-color pmr"></span> PMR: clientes</span>
+          <span><span class="dot-color pmp"></span> PMP: fornecedores</span>
+          <span><span class="dot-color ccc"></span> CCC: total</span>
+        </div>
+      </div>
+      <div class="card monthly-table-card">
+        <h3>Necessidade de Capital de Giro (mês a mês)</h3>
+        <p class="hint">Evolução do ACO, PCO, NCG, CDG e Tesouraria ao longo dos 12 meses.</p>
+        <div class="monthly-table-wrap">
+          <table class="monthly-dre-table" id="monthlyGiroTable">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Linha do Tempo do Ciclo de Caixa</h3>
+          <div class="timeline" id="timelineCCC"></div>
+        </div>
+        <div class="card">
+          <h3>Projeção de Caixa (12 meses)</h3>
+          <div class="chart-bars" id="cashChart"></div>
+        </div>
+      </div>
+      <div class="card scenarios">
+        <h3>Simulação de cenários</h3>
+        <p>"O que acontece se o PMP cair 10 dias?"</p>
+        <button id="btnSimPmp" class="btn primary">Simular: PMP −10 dias</button>
+        <button id="btnSimPmr" class="btn">Simular: PMR −10 dias</button>
+        <button id="btnSimPme" class="btn">Simular: PME +10 dias</button>
+        <div class="scenario-result" id="scenarioResult"></div>
+      </div>
+      <div class="card challenge-featured" id="challengeGiro">
+        <div class="challenge-featured-content">
+          <span class="challenge-badge">🎯 Desafio em destaque</span>
+          <h3>Alcance saldo de Tesouraria positivo</h3>
+          <p>Reduza a NCG ou aumente o CDG ajustando prazos e custos.</p>
+          <button class="btn primary" id="btnChallengeGiro">Ver todos os desafios</button>
+        </div>
+      </div>
+      <div class="card feedback" id="feedbackGiro">
+        <strong>Feedback Capital de Giro:</strong> <span></span>
+      </div>
+      <div class="module-nav">
+        <button class="btn secondary prev-btn" data-prev="fluxo-caixa"><span>←</span> Voltar</button>
+        <button class="btn primary next-btn" data-next="kpis">Próximo <span>→</span></button>
+      </div>
+    </section>
+
+    <!-- KPIs -->
+    <section id="tab-kpis" class="tab-panel">
+      <div class="panel-header">
+        <h2>KPIs Financeiros</h2>
+        <p class="hint">Indicadores calculados a partir da DRE, do Balanço e do Capital de Giro.</p>
+      </div>
+      <div class="card flow-diagram center">
+        <div class="flow-step">DRE</div><span class="flow-arrow">→</span>
+        <div class="flow-step">Balanço</div><span class="flow-arrow">→</span>
+        <div class="flow-step">Capital de Giro</div><span class="flow-arrow">→</span>
+        <div class="flow-step">KPIs</div>
+      </div>
+      <div class="card">
+        <h3>Tabela de Indicadores</h3>
+        <div class="kpis-table-wrap">
+          <table class="kpis-table" id="kpisTable">
+            <thead>
+              <tr><th>Grupo</th><th>KPI</th><th>Valor</th><th>Fórmula / Avaliação</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="kpis-legend" id="kpisLegend"></div>
+      </div>
+      <div class="card monthly-table-card">
+        <h3>KPIs (valores mensais)</h3>
+        <p class="hint">Evolução dos principais indicadores mês a mês com base na DRE e no Balanço mensal.</p>
+        <div class="monthly-table-wrap">
+          <table class="monthly-dre-table" id="monthlyKpisTable">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card feedback" id="feedbackKpis">
+        <strong>Feedback KPIs:</strong> <span></span>
+      </div>
+      <div class="module-nav">
+        <button class="btn secondary prev-btn" data-prev="giro"><span>←</span> Voltar</button>
+        <button class="btn primary next-btn" data-next="aprender">Próximo <span>→</span></button>
+      </div>
+    </section>
+
+    <!-- Aprender -->
+    <section id="tab-aprender" class="tab-panel">
+      <div class="panel-header">
+        <h2>Aprender</h2>
+        <p class="hint">Conteúdo pedagógico, glossário, quiz e desafios.</p>
+      </div>
+      <div class="card progress-card">
+        <h3>Seu progresso</h3>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-stats" id="progressStats"></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Glossário</h3>
+          <dl class="glossary" id="glossary"></dl>
+        </div>
+        <div class="card">
+          <h3>Quiz Rápido</h3>
+          <div id="quizContainer"></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Desafios Guiados</h3>
+        <div class="challenges" id="challenges"></div>
+      </div>
+      <div class="module-nav">
+        <button class="btn secondary prev-btn" data-prev="kpis"><span>←</span> Voltar</button>
+        <span></span>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>FinSim — app educacional para finanças corporativas</p>
+  </footer>
+
+  <!-- QR Code Modal -->
+  <div class="qr-modal-overlay" id="qrModal">
+    <div class="qr-modal-card">
+      <button class="qr-modal-close" id="qrModalClose" aria-label="Fechar">×</button>
+      <h3>Compartilhe o FinSim</h3>
+      <p class="qr-modal-hint">Aponte a câmera do celular para acessar:</p>
+      <div class="qr-code-wrap" id="qrcode"></div>
+      <div class="qr-url" id="qrUrl"></div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
